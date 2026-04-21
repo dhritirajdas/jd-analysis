@@ -34,6 +34,7 @@ When you paste a JD, the agent:
 3. Scores the JD across 5 weighted parameters against your resume
 4. Cross-checks your preferences and deal-breakers
 5. Prints a full evaluation report with a verdict and a 2-week improvement plan
+6. Saves an ATS & Resume Checklist to a file in the working directory
 
 ---
 
@@ -89,13 +90,21 @@ User target is ₹22 LPA — within 8%, scoring 4/5.
 
 ### 2-Week Improvement Plan
 
-| Parameter         | Score | Action                                                                 |
-|-------------------|-------|------------------------------------------------------------------------|
-| Skills match      | 4/5   | Complete Databricks Spark fundamentals course (~6 hrs) on Coursera     |
-| Experience fit    | 3/5   | Reframe FMCG metrics work as customer/revenue analytics in resume      |
-| Role-level fit    | 4/5   | No action needed                                                       |
-| Education / Certs | 5/5   | No action needed                                                       |
-| Salary fit        | 4/5   | Research SaaS analyst comp bands; prepare negotiation range ₹21–24 LPA|
+| Parameter         | Score | Priority | Action                                                              | Resource / Tool                        | Time Estimate |
+|-------------------|-------|----------|---------------------------------------------------------------------|----------------------------------------|---------------|
+| Skills match      | 4/5   | High     | Complete Databricks Spark fundamentals course (~6 hrs) on Coursera | Coursera — Databricks Spark course     | 2 days        |
+| Experience fit    | 3/5   | High     | Reframe FMCG metrics work as customer/revenue analytics in resume  | Resume — Work Experience section       | 1 day         |
+| Role-level fit    | 4/5   | Low      | No action needed                                                    | —                                      | —             |
+| Education / Certs | 5/5   | Low      | No action needed                                                    | —                                      | —             |
+| Salary fit        | 4/5   | Med      | Research SaaS analyst comp bands; prepare negotiation range ₹21–24 LPA | Glassdoor, Levels.fyi, AmbitionBox | 2 hours       |
+
+**Week-by-week breakdown:**
+- **Days 1–7:** Complete Spark course; reframe FMCG bullet points in resume Experience section
+- **Days 8–14:** Research comp bands; prepare negotiation BATNA; finalize resume edits
+
+---
+
+ATS & Resume Checklist saved to `ats-checklist-[company]-[role].md`.
 ```
 
 ---
@@ -109,5 +118,8 @@ To clear your resume and preferences and start fresh, type `reset` in the chat.
 ## Notes
 
 - The agent does a live web search for market salary data when a JD doesn't list compensation
+- Company tier and candidate leverage adjustments are applied to all salary calculations
+- Institution tier is verified via web search (NIRF rankings) before scoring Education / Certs
+- The ATS & Resume Checklist is saved silently as `ats-checklist-[company]-[role].md` — it is not printed in chat
 - All scoring criteria are defined in `CLAUDE.md` — you can edit them to adjust weights or verdict thresholds
 - This project is designed for the Indian job market by default but works globally
