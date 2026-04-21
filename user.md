@@ -9,7 +9,7 @@ This file tracks the user's job search preferences and hard/soft constraints. Up
 | Preference | Value |
 |------------|-------|
 | Work days | — |
-| Work mode | — (Remote / Hybrid / On-site) |
+| Work mode | — |
 | Work hours | — |
 | Travel willingness | — |
 

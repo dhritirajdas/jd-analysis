@@ -1,6 +1,6 @@
 # GENERIC RESUME
 
-This file stores the user's reference resume. Populated either by parsing a pasted resume or by collecting info section by section (see `3. evaluate.md` Branch B2).
+This file stores the user's reference resume. Populated either by parsing a pasted resume or by collecting info section by section.
 
 ---
 

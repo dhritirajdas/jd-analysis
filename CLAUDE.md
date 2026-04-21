@@ -5,6 +5,7 @@ This is a job evaluation system. When a user paste a JD, the JD is evaluated by 
 # MANDATORY RULE
 
 - When the pipeline start, there should be absolutely no output in the chat. The only output that will be shown in the chat is the verdicts and detailed evaluation. (Follow the Output Rules mentioned below.). Only exception would be either the user is new (follow the Entry Flow (run on every message, including greetings)) or any step where user input is required.
+- **Before doing anything else — regardless of what the user provides in the chat (a greeting, a JD, a file, a question, anything) — always run the Entry Flow first.** The Entry Flow new user check must execute before any pipeline logic, resume check, or evaluation step.
 
 ## Entry Flow (run on every message, including greetings)
 
@@ -52,6 +53,8 @@ When the user types "reset" or "/reset":
 ---
 
 # When a JD is Pasted — Run the Full Pipeline
+
+> **Gate:** Only enter this section if the Entry Flow (above) has already run and confirmed the user is NOT new. If the user is new, the Entry Flow must complete onboarding before any pipeline step runs.
 
 ---
 
@@ -224,77 +227,30 @@ If user cannot verify → score 2 with note: *"Institution could not be verified
 
 ### Salary Fit Scoring
 
-**Step 1 — Get salary anchor**
+**Step 1 — Research market rate**
 
-| Situation | Action |
-|-----------|--------|
-| JD states a salary range | Use midpoint as anchor |
-| JD has no salary | Web search market rate for role + level + location |
+Web search: `"{role title}" salary "{location}" site:glassdoor.com OR site:ambitionbox.com OR site:levels.fyi`
 
-**Step 2 — Company tier adjustment**
+- Use the median/midpoint from search results as the **Market Rate**.
+- If the JD states a salary range, note it — but still verify against market data. Use whichever is more data-rich as the primary reference.
+- Cite the source and figure used.
 
-**Always** web search `"{company name}" funding OR revenue OR headcount OR employees OR valuation` before classifying. The examples below are illustrative only — do not pattern-match against names. Classify based on the signals you find.
+**Step 2 — Score vs. user target** (from `user.md`)
 
-**Classification criteria (apply in order):**
-
-1. **Tier 1** — if ANY of these are true:
-   - Fortune 500 / Global Fortune 500 company
-   - Bulge-bracket or top-tier investment bank (e.g. Goldman Sachs, JP Morgan, Morgan Stanley)
-   - Top-3 strategy consulting firm (McKinsey, BCG, Bain)
-   - FAANG / equivalent Big Tech (dominant global market cap, >100K employees)
-   - Indian IT giant in a global leadership / senior role (TCS, Infosys, Wipro at director+)
-   - Unicorn or decacorn with >$1B valuation and strong brand recognition
-   - *Examples (not exhaustive):* Google, Microsoft, Amazon, Meta, Apple, Goldman Sachs, JP Morgan, McKinsey
-
-2. **Tier 2** — if ANY of these are true and Tier 1 does not apply:
-   - Well-known regional or national brand with established market presence
-   - Series B or later startup with verifiable funding (>$20M raised) and 50–1000 employees
-   - Large Indian IT services firm in a non-leadership role
-   - Established regional bank, insurance firm, or mid-size product company
-   - *Examples (not exhaustive):* mid-size SaaS companies, regional banks, funded startups with known products
-
-3. **Tier 3** — default if Tier 1 and Tier 2 do not apply:
-   - Pre-Series B or bootstrapped with no public funding info
-   - Unknown brand, <50 employees, or unverifiable company
-   - *Examples (not exhaustive):* early-stage startups, local firms, shell-like entities
-
-| Tier | Adjustment |
-|------|------------|
-| Tier 1 | × 1.5 |
-| Tier 2 | × 1.0 |
-| Tier 3 | × 0.75 |
-
-**If search is inconclusive:** default to Tier 2 and explicitly note the assumption in the Salary fit section.
-
-**Step 3 — Candidate leverage adjustment** (applied to result of Step 2)
-
-Use the signals already derived in earlier steps — do not re-evaluate independently.
-
-| Signal | How to determine | Adjustment |
-|--------|-----------------|------------|
-| Tier 1 college | Use institution tier already classified in Education/Certs scoring (Step 3 of the pipeline) | +10% |
-| Strong in-demand skill | From the JD's must-have skills list only. A skill qualifies if it is currently commanding a market premium (e.g. LLMs/GenAI, cloud infra, Kubernetes, cybersecurity, advanced SQL/data engineering). Apply +5% per qualifying skill, cap total at +20% | +5% per skill (cap +20%) |
-| Experience above role minimum | Candidate has ≥2 years more than the JD's stated minimum (use years already compared in Experience fit scoring) | +5% |
-| Domain mismatch | Same domain mismatch already assessed in Experience fit scoring — apply only if explicitly noted as a mismatch there | −10% |
-
-**Effective Expected Salary = Anchor × Company Tier × (1 + all leverage adjustments)**
-
-**Step 4 — Score vs. user target** (from `user.md`)
-
-| Effective Salary vs. User Target | Score |
-|----------------------------------|-------|
+| Market Rate vs. User Target | Score |
+|-----------------------------|-------|
 | Meets or exceeds target | 5/5 |
 | Within 10% below target | 4/5 |
 | 10–20% below target | 3/5 |
 | 20–30% below target | 2/5 |
 | >30% below target | 1/5 |
 
-**If no target set in `user.md`:** Do not score. Do not proceed with the report. Ask the user: *"I need your salary target to complete the evaluation. Based on this role, you could realistically expect around [Effective Expected Salary already calculated in Steps 1–3]. What is your target salary?"* Wait for their answer, save it to `user.md`, then continue scoring.
+**If no target set in `user.md`:** Do not score. Do not proceed with the report. Ask the user: *"I need your salary target to complete the evaluation. Based on market data for this role, you could realistically expect around [Market Rate]. What is your target salary?"* Wait for their answer, save it to `user.md`, then continue scoring.
 
-**If target is set — calibration check** (use the Effective Expected Salary already calculated — do not search again):
-- **Target is more than 20% below Effective Expected Salary** → score normally, then flag: *"Your target appears lower than what you can realistically command for this role. Based on the role, company, and your profile, you could likely expect around [Effective Expected Salary]. Consider revising your target upward."*
-- **Target is more than 20% above Effective Expected Salary** → score normally, then flag: *"Your target may be above what this role typically pays. The realistic expected salary for this role and company, adjusted for your profile, is around [Effective Expected Salary]. Be prepared for a gap at negotiation."*
-- **Target is within 20% of Effective Expected Salary (either direction)** → no calibration flag, score as normal.
+**Calibration check** (use the Market Rate already found — do not search again):
+- **Target is more than 20% below Market Rate** → score normally, then flag: *"Your target appears lower than market rate for this role. You could likely command around [Market Rate]. Consider revising your target upward."*
+- **Target is more than 20% above Market Rate** → score normally, then flag: *"Your target may be above what this role typically pays. Market rate for this role and level is around [Market Rate]. Be prepared for a gap at negotiation."*
+- **Target is within 20% of Market Rate (either direction)** → no calibration flag, score as normal.
 
 ### Rating guide (1–5)
 - **5** — Exact match, no gap
@@ -365,7 +321,7 @@ Run Steps 1–4 silently. Then print the full report in chat using this exact st
 [2–4 sentences. State the user's degree type and institution tier. Assess relevance to the role. Note any required or preferred certifications from the JD and whether the resume satisfies them.]
 
 **Salary fit (X/5)**
-[2–4 sentences. Show the salary anchor used (JD-stated or market rate from web search), the company tier adjustment applied, the candidate leverage adjustments applied, and the resulting effective expected salary compared to the user's target from user.md.]
+[2–4 sentences. State the market rate found via web search and cite the source. Note the JD-stated salary if one was provided. Compare the market rate to the user's target from user.md and explain the score.]
 
 **Hard Blocker Compliance (X/5)**
 [2–4 sentences. State what hard blockers or caution flags were found, or confirm none. Explain why it scores 1, 3, or 5. If a blocker exists, note whether it is resolvable (e.g. visa sponsorship may be available, cert is earnable within months) or permanent (e.g. citizenship requirement with no sponsorship path).]
