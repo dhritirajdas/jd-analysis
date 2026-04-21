@@ -42,20 +42,60 @@ When you paste a JD, the agent:
 ```
 ## Evaluation
 
-Archetype: Data / Analytics
-Blocker Notes: None
+**Archetype:** Data / Analytics
+**Blocker Notes:** None
 
-Scores:
+**Scores:**
 
-| Parameter        | Score | Notes                          |
-|------------------|-------|--------------------------------|
-| Skills match     | 4/5   | Strong SQL/Python match ...    |
-| Experience fit   | 3/5   | Domain mismatch: FMCG → SaaS  |
-| Role-level fit   | 4/5   | Mid-level alignment confirmed  |
-| Education / Certs| 5/5   | BITS Pilani, relevant degree   |
-| Salary fit       | 4/5   | Within 8% of target            |
+| Parameter         | Score | Notes                                        |
+|-------------------|-------|----------------------------------------------|
+| Skills match      | 4/5   | Strong SQL/Python match; Spark not in resume |
+| Experience fit    | 3/5   | Domain mismatch: FMCG → SaaS                |
+| Role-level fit    | 4/5   | Mid-level alignment confirmed                |
+| Education / Certs | 5/5   | BITS Pilani, relevant degree                 |
+| Salary fit        | 4/5   | Within 8% of target                          |
 
-Weighted Final Score: 3.85 — Apply with Caution
+**Weighted Final Score: 3.85 — Apply with Caution**
+
+**Flags:**
+- Work mode: JD requires on-site (Bangalore); your preference is Remote
+
+---
+
+### Detailed Analysis
+
+**Skills match (4/5)**
+The JD requires SQL, Python, and Tableau — all present in the resume with hands-on project evidence.
+Spark is listed as preferred but absent from the resume; this is a gap worth addressing before applying.
+
+**Experience fit (3/5)**
+The JD asks for 3–5 years in a SaaS or B2B analytics environment. Resume shows 2.5 years in FMCG.
+Domain mismatch is the main drag — the analytical skills transfer, but the industry context does not.
+
+**Role-level fit (4/5)**
+The role is a mid-level individual contributor with no direct reports. Resume scope aligns well.
+No leadership gap; current titles and responsibilities match the seniority expected.
+
+**Education / Certs (5/5)**
+BITS Pilani (B.E. Computer Science) is a Tier 1 institution and directly relevant.
+No certifications required by the JD; none are missing.
+
+**Salary fit (4/5)**
+JD states ₹18–22 LPA. Company is a mid-tier SaaS firm (no adjustment).
+Candidate leverage: BITS Pilani (+0.5), strong Python/SQL (+0.5) → effective expected: ~₹20.5 LPA.
+User target is ₹22 LPA — within 8%, scoring 4/5.
+
+---
+
+### 2-Week Improvement Plan
+
+| Parameter         | Score | Action                                                                 |
+|-------------------|-------|------------------------------------------------------------------------|
+| Skills match      | 4/5   | Complete Databricks Spark fundamentals course (~6 hrs) on Coursera     |
+| Experience fit    | 3/5   | Reframe FMCG metrics work as customer/revenue analytics in resume      |
+| Role-level fit    | 4/5   | No action needed                                                       |
+| Education / Certs | 5/5   | No action needed                                                       |
+| Salary fit        | 4/5   | Research SaaS analyst comp bands; prepare negotiation range ₹21–24 LPA|
 ```
 
 ---
