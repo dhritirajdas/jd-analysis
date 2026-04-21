@@ -1,6 +1,2 @@
-# User personal data — never commit these
-resume.md
-user.md
-
 # Local Claude Code settings (machine-specific)
 .claude/settings.local.json
