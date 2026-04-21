@@ -1,10 +1,10 @@
 # Job Analysis — Project Context
 
-This is a job evaluation system. When the user pastes a JD, evaluate it against their resume and requirements, then print the full evaluation report in chat.
+This is a job evaluation system. When a user paste a JD, the JD is evaluated by using your resume, provide a verdict and tailored resume is created if the user decides to apply.
 
-# Global Rule
+# MANDATORY RULE
 
-- All pipeline steps (resume check, blocker check, archetype detection, scoring) run silently. Only show final output in chat.
+- When the pipeline start, there should be absolutely no output in the chat. The only output that will be shown in the chat is the verdicts and detailed evaluation. (Follow the Output Rules mentioned below.). Only exception would be either the user is new (follow the Entry Flow (run on every message, including greetings)) or any step where user input is required.
 
 ## Entry Flow (run on every message, including greetings)
 
@@ -112,6 +112,15 @@ Use this table when rating **Skills match** and **Experience fit** in Step 3.
 | Operations / Program Mgmt | Project management tools (Jira, Asana, Monday); process documentation; cross-team coordination | Managed multi-stakeholder programs; delivered operational improvements with measurable outcomes |
 | People / Leadership | HR systems, L&D tools, performance frameworks; org design experience if Director+ | People management track record; org building or restructuring; culture/engagement initiatives |
 | Creative / Design | Design tools (Figma, Adobe); portfolio quality; UX research methods if applicable | Shipped user-facing designs; collaborated with product/eng; user research or testing experience |
+
+### Archetype Fallback (Edge Cases Only)
+
+After mapping to an archetype, check: does the role title contain terminology not listed in the Examples column above (e.g. "Bancassurance", "Treasury Sales", "RevOps", "Relationship Manager — HNI", "Customer Success Engineer")?
+
+- **If yes** → web search `"[role title]" skills synonyms equivalent experience [industry]` and extract a vocabulary map: JD terms ↔ equivalent resume terms. Use this map to supplement the static table criteria when scoring Skills match and Experience fit in Step 3.
+- **If no** → use the static table as-is.
+
+Do not trigger the fallback for common role titles that clearly map to an archetype (e.g. "Software Engineer", "Data Analyst", "Product Manager").
 
 ---
 
@@ -303,7 +312,7 @@ Use the signals already derived in earlier steps — do not re-evaluate independ
 
 Run Steps 1–4 silently. Then print the full report in chat using this exact structure. After printing the report, stop — do **not** ask the user whether they plan to apply or any follow-up question.
 
-**ATS & Resume Checklist — do NOT print in chat.** Generate it silently and save it to a file named `ats-checklist-[company]-[role].md` in the working directory. After printing the report, add one line at the bottom: *"ATS & Resume Checklist saved to `ats-checklist-[company]-[role].md`."*
+**ATS & Resume Checklist — do NOT print in chat.** Generate it silently but **do NOT save it to a file yet** (WIP — file creation disabled; will be used to generate a tailored resume in a future step). Do not add any file-saved confirmation line at the bottom of the report.
 
 ---
 
