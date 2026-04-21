@@ -50,9 +50,9 @@ Before scoring, the agent scans the JD for absolute requirements you clearly can
 - Location with no exceptions (e.g. "on-site in X city only")
 - Certifications requiring years of hands-on work (e.g. CA, CPA, PMP required)
 
-**If a hard blocker is found:** the pipeline stops immediately. The only output is one line — `"Hard blocker: [reason]. Verdict: Do Not Apply."` No score is shown.
+**If a hard blocker is found:** the pipeline does **not** stop. The Hard Blocker Compliance parameter is scored **1/5**, and the pipeline continues to full evaluation. The blocker is prominently noted in the report, and the final verdict is capped at **"Apply with Caution"** — never "Apply" — even if all other parameters score well.
 
-**If a requirement says "preferred" or "nice to have":** it is flagged as a caution note and the pipeline continues.
+**If a requirement says "preferred" or "nice to have":** Hard Blocker Compliance is scored **3/5**, flagged as a caution note, and the pipeline continues normally.
 
 ---
 
@@ -77,15 +77,16 @@ The archetype determines what counts as a strong skills match and experience fit
 
 ### Step 3 — Weighted Scoring
 
-Each of the five parameters is rated 1–5 based on your resume vs. the JD requirements. The scores are combined into a weighted final score.
+Each of the six parameters is rated 1–5 based on your resume vs. the JD requirements. The scores are combined into a weighted final score.
 
 | Parameter | Weight | What is assessed |
 |-----------|--------|-----------------|
-| Skills match | 30% | Must-haves vs nice-to-haves from the JD, each mapped to a specific resume line or flagged as missing |
-| Experience fit | 25% | Years required vs actual, domain/industry match, and role type (built vs managed vs consulted) |
-| Role-level fit | 20% | JD seniority vs your current level — penalises both underqualified and overqualified |
-| Education / Certs | 15% | Degree relevance and institution tier (verified via NIRF web search); cert adjustments applied |
-| Salary fit | 10% | Salary anchor → company tier adjustment → candidate leverage modifiers → vs your target |
+| Hard Blocker Compliance | 25% | Whether absolute JD requirements (visa, mandatory degree, location, required certs) can be met |
+| Skills match | 25% | Must-haves vs nice-to-haves from the JD, each mapped to a specific resume line or flagged as missing |
+| Experience fit | 20% | Years required vs actual, domain/industry match, and role type (built vs managed vs consulted) |
+| Role-level fit | 15% | JD seniority vs your current level — penalises both underqualified and overqualified |
+| Education / Certs | 10% | Degree relevance and institution tier (verified via NIRF web search); cert adjustments applied |
+| Salary fit | 5% | Salary anchor → company tier adjustment → candidate leverage modifiers → vs your target |
 
 **Rating scale:**
 - **5** — Exact match, no gap
@@ -94,7 +95,7 @@ Each of the five parameters is rated 1–5 based on your resume vs. the JD requi
 - **2** — Weak match, significant gap
 - **1** — Little to no match
 
-**Final score** = (Skills × 0.30) + (Experience × 0.25) + (Role-level × 0.20) + (Education × 0.15) + (Salary × 0.10)
+**Final score** = (HBC × 0.25) + (Skills × 0.25) + (Experience × 0.20) + (Role-level × 0.15) + (Education × 0.10) + (Salary × 0.05)
 
 #### How Skills match is scored
 The agent identifies must-have skills from the JD (using the archetype table), then cites the exact resume line that demonstrates each one — or explicitly marks it as missing. Gaps are classified as hard blockers, learnable gaps, or minor weaknesses.
@@ -141,6 +142,8 @@ Before showing the score, the agent cross-checks `user.md` for deal-breakers, lo
 | 3.0 – 3.9 | Apply with Caution |
 | Below 3.0 | Do Not Apply |
 
+**Hard blocker cap:** if Hard Blocker Compliance scores 1/5, the verdict is capped at **"Apply with Caution"** regardless of the final score.
+
 ---
 
 ## Sample Output
@@ -153,15 +156,16 @@ Before showing the score, the agent cross-checks `user.md` for deal-breakers, lo
 
 **Scores:**
 
-| Parameter         | Score | Notes                                        |
-|-------------------|-------|----------------------------------------------|
-| Skills match      | 4/5   | Strong SQL/Python match; Spark not in resume |
-| Experience fit    | 3/5   | Domain mismatch: FMCG → SaaS                |
-| Role-level fit    | 4/5   | Mid-level alignment confirmed                |
-| Education / Certs | 5/5   | BITS Pilani, relevant degree                 |
-| Salary fit        | 4/5   | Within 8% of target                          |
+| Parameter                | Score | Notes                                        |
+|--------------------------|-------|----------------------------------------------|
+| Hard Blocker Compliance  | 5/5   | No hard blockers found                       |
+| Skills match             | 4/5   | Strong SQL/Python match; Spark not in resume |
+| Experience fit           | 3/5   | Domain mismatch: FMCG → SaaS                |
+| Role-level fit           | 4/5   | Mid-level alignment confirmed                |
+| Education / Certs        | 5/5   | BITS Pilani, relevant degree                 |
+| Salary fit               | 4/5   | Within 8% of target                          |
 
-**Weighted Final Score: 3.85 — Apply with Caution**
+**Weighted Final Score: 4.05 — Apply**
 
 **Flags:**
 - Work mode: JD requires on-site (Bangalore); your preference is Remote
@@ -191,17 +195,21 @@ JD states ₹18–22 LPA. Company is a mid-tier SaaS firm (Tier 2, no adjustment
 Candidate leverage: BITS Pilani (+10%), strong Python/SQL (+10%) → effective expected: ~₹20.5 LPA.
 User target is ₹22 LPA — within 8%, scoring 4/5.
 
+**Hard Blocker Compliance (5/5)**
+No hard blockers detected. The JD has no visa, mandatory cert, or strict location requirements that cannot be met. Pipeline ran clean.
+
 ---
 
 ### 2-Week Improvement Plan
 
-| Parameter         | Score | Priority | Action                                                              | Resource / Tool                        | Time Estimate |
-|-------------------|-------|----------|---------------------------------------------------------------------|----------------------------------------|---------------|
-| Skills match      | 4/5   | High     | Complete Databricks Spark fundamentals course (~6 hrs) on Coursera | Coursera — Databricks Spark course     | 2 days        |
-| Experience fit    | 3/5   | High     | Reframe FMCG metrics work as customer/revenue analytics in resume  | Resume — Work Experience section       | 1 day         |
-| Role-level fit    | 4/5   | Low      | No action needed                                                    | —                                      | —             |
-| Education / Certs | 5/5   | Low      | No action needed                                                    | —                                      | —             |
-| Salary fit        | 4/5   | Med      | Research SaaS analyst comp bands; prepare negotiation range ₹21–24 LPA | Glassdoor, Levels.fyi, AmbitionBox | 2 hours       |
+| Parameter                | Score | Priority | Action                                                              | Resource / Tool                        | Time Estimate |
+|--------------------------|-------|----------|---------------------------------------------------------------------|----------------------------------------|---------------|
+| Hard Blocker Compliance  | 5/5   | Low      | No action needed                                                    | —                                      | —             |
+| Skills match             | 4/5   | High     | Complete Databricks Spark fundamentals course (~6 hrs) on Coursera | Coursera — Databricks Spark course     | 2 days        |
+| Experience fit           | 3/5   | High     | Reframe FMCG metrics work as customer/revenue analytics in resume  | Resume — Work Experience section       | 1 day         |
+| Role-level fit           | 4/5   | Low      | No action needed                                                    | —                                      | —             |
+| Education / Certs        | 5/5   | Low      | No action needed                                                    | —                                      | —             |
+| Salary fit               | 4/5   | Med      | Research SaaS analyst comp bands; prepare negotiation range ₹21–24 LPA | Glassdoor, Levels.fyi, AmbitionBox | 2 hours       |
 
 **Week-by-week breakdown:**
 - **Days 1–7:** Complete Spark course; reframe FMCG bullet points in resume Experience section
